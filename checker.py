@@ -131,12 +131,13 @@ def format_new_chapter_message(chapter):
     )
 
 
-def format_startup_message(chapter_count, latest_title):
+def format_startup_message(chapter_count, latest_chapter):
     return (
         "✅ Manga notifier initialized.\n\n"
         f"📚 Manga: {MANGA_NAME}\n"
         f"📌 Saved chapters: {chapter_count}\n"
-        f"🔥 Latest: {latest_title}\n\n"
+        f"🔥 Latest: {latest_chapter['title']}\n\n"
+        f"🔗 {latest_chapter['url']}\n\n"
         "Old chapters were saved as baseline. You will only be notified about new chapters."
     )
 
@@ -158,16 +159,17 @@ def main():
     if first_run:
         save_seen(current_ids)
 
-        latest_title = chapters[0]["title"]
+        latest_chapter = chapters[0]
 
         print("First run. Baseline saved.")
         print(f"Saved {len(current_ids)} chapters.")
-        print(f"Latest: {latest_title}")
-
+        print(f"Latest: {latest_chapter['title']}")
+        print(f"URL: {latest_chapter['url']}")
+        
         send_telegram_message(
             format_startup_message(
                 chapter_count=len(current_ids),
-                latest_title=latest_title
+                latest_chapter=latest_chapter
             )
         )
 
