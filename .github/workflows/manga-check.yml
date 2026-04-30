@@ -10,7 +10,7 @@ permissions:
 
 concurrency:
   group: manga-checker
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   check:
@@ -30,11 +30,20 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run manga checker
+      - name: Run manga checker every 1 minute for 5 minutes
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python checker.py
+        run: |
+          for i in 1 2 3 4 5
+          do
+            echo "Check number $i"
+            python checker.py
+
+            if [ "$i" != "5" ]; then
+              sleep 60
+            fi
+          done
 
       - name: Save updated chapter state
         run: |
