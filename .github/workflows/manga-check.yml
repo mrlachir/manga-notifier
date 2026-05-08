@@ -1,59 +1,59 @@
-name: Manga Chapter Notifier
+# name: Manga Chapter Notifier
 
-on:
-  schedule:
-    # Thursday: 10:00 AM to 11:50 PM in Morocco (09:00 - 23:00 UTC)
-    - cron: "*/10 9-23 * * 4"
-    # Friday: 12:00 AM to 5:00 PM in Morocco (00:00 - 16:00 UTC)
-    - cron: "*/10 0-16 * * 5"
-  workflow_dispatch:
+# on:
+#   schedule:
+#     # Thursday: 10:00 AM to 11:50 PM in Morocco (09:00 - 23:00 UTC)
+#     - cron: "*/10 9-23 * * 4"
+#     # Friday: 12:00 AM to 5:00 PM in Morocco (00:00 - 16:00 UTC)
+#     - cron: "*/10 0-16 * * 5"
+#   workflow_dispatch:
 
-permissions:
-  contents: write
+# permissions:
+#   contents: write
 
-concurrency:
-  group: manga-checker
-  cancel-in-progress: false
+# concurrency:
+#   group: manga-checker
+#   cancel-in-progress: false
 
-jobs:
-  check:
-    runs-on: ubuntu-latest
+# jobs:
+#   check:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: true
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+#         with:
+#           persist-credentials: true
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+#       - name: Set up Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.12"
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+#       - name: Install dependencies
+#         run: pip install -r requirements.txt
 
-      - name: Run manga checker
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        # Removed the bash loop so it executes the python script exactly once
-        run: python checker.py
+#       - name: Run manga checker
+#         env:
+#           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+#           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+#         # Removed the bash loop so it executes the python script exactly once
+#         run: python checker.py
 
-      - name: Save updated chapter state
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
+#       - name: Save updated chapter state
+#         run: |
+#           git config user.name "github-actions"
+#           git config user.email "github-actions@github.com"
 
-          if [ -f seen_chapters.json ]; then
-            git add seen_chapters.json
+#           if [ -f seen_chapters.json ]; then
+#             git add seen_chapters.json
 
-            if git diff --cached --quiet; then
-              echo "No state changes."
-            else
-              git commit -m "Update seen chapters"
-              git push
-            fi
-          else
-            echo "seen_chapters.json not found."
-          fi
+#             if git diff --cached --quiet; then
+#               echo "No state changes."
+#             else
+#               git commit -m "Update seen chapters"
+#               git push
+#             fi
+#           else
+#             echo "seen_chapters.json not found."
+#           fi
